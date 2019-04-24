@@ -76,14 +76,19 @@ def main(config, image_path, cuda, crf):
     image = image.cuda() if cuda else image
 
     # Inference
-    output = model(Variable(image, volatile=True))
+    #  MES change to silence 'volatile' deprecation message
+    with torch.no_grad():
+        # output = model(Variable(image, volatile=True))
+        output = model(Variable(image))
 
-    output = F.upsample(output, size=image_size, mode="bilinear")
-    output = F.softmax(output, dim=1)
-    output = output[0].cpu().data.numpy()
+        output = F.upsample(output, size=image_size, mode="bilinear")
+        output = F.softmax(output, dim=1)
+        output = output[0].cpu().data.numpy()
 
-    if crf:
-        output = dense_crf(image_original, output)
+        if crf:
+            output = dense_crf(image_original, output)
+        #
+    #
     labelmap = np.argmax(output.transpose(1, 2, 0), axis=2)
 
     labels = np.unique(labelmap)
