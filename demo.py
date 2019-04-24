@@ -81,7 +81,9 @@ def main(config, image_path, cuda, crf):
         # output = model(Variable(image, volatile=True))
         output = model(Variable(image))
 
-        output = F.upsample(output, size=image_size, mode="bilinear")
+        # MES change to silence 'upsample' deprecation message
+        # output = F.upsample(output, size=image_size, mode="bilinear")
+        output = F.interpolate(output, size=image_size, mode="bilinear")
         output = F.softmax(output, dim=1)
         output = output[0].cpu().data.numpy()
 
