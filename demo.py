@@ -82,8 +82,9 @@ def main(config, image_path, cuda, crf):
         output = model(Variable(image))
 
         # MES change to silence 'upsample' deprecation message
+        # MES change to silence 'align_corners' default message
         # output = F.upsample(output, size=image_size, mode="bilinear")
-        output = F.interpolate(output, size=image_size, mode="bilinear")
+        output = F.interpolate(output, size=image_size, mode="bilinear", align_corners=False)
         output = F.softmax(output, dim=1)
         output = output[0].cpu().data.numpy()
 
