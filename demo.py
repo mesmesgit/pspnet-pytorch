@@ -4,10 +4,21 @@
 # Author:   Kazuto Nakashima
 # URL:      http://kazuto1011.github.io
 # Created:  2017-11-15
+#
+# MES rev:  April 2019 to semantically segment images for use with MegaDepth depth estimation
 
 import click
 import cv2
+# MES change to deal with headless
+import matplotlib as mpl
+mpl.use('Agg')
+#
 import matplotlib.pyplot as plt
+# MES change to use GPU 1
+import os
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+#
 import numpy as np
 import torch
 import torch.nn as nn
@@ -52,6 +63,9 @@ def main(config, image_path, cuda, crf):
     image_size = (CONFIG.IMAGE.SIZE.TEST,) * 2
 
     # Image preprocessing
+    #  MES change for grayscale
+    #  for color image input, use cv2.IMREAD_COLOR
+    #  for grayscale image input, use cv2.IMREAD_GRAYSCALE
     image = cv2.imread(image_path, cv2.IMREAD_COLOR).astype(float)
     image = cv2.resize(image, image_size)
     image_original = image.astype(np.uint8)
@@ -95,7 +109,9 @@ def main(config, image_path, cuda, crf):
         ax.set_yticks([])
 
     plt.tight_layout()
-    plt.show()
+    # MES changes to save output
+    # plt.show()
+    plt.savefig('docs/demo_out.png')
 
 
 if __name__ == "__main__":
