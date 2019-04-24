@@ -39,6 +39,7 @@ from libs.utils import dense_crf
 """
 #
 #  Example parameters:
+#  rootpath = '../pspnet-pytorch/'
 #  config = '../pspnet-pytorch/config/ade20k.yaml'
 #  image_path = '../MegaDepth/docs/vertical-street.jpg'
 #  cuda = True
@@ -46,20 +47,20 @@ from libs.utils import dense_crf
 #  out_class_figure = 'docs/demo_out.png'
 #  out_masked_sky_image = 'docs/image-sky-masked.png'
 #
-def semseg(config, image_path, cuda, crf):
+def semseg(rootpath, config, image_path, cuda, crf):
     CONFIG = Dict(yaml.load(open(config)))
 
     cuda = cuda and torch.cuda.is_available()
 
     # Label list
-    with open(CONFIG.LABELS) as f:
+    with open(os.path.join(rootpath, CONFIG.LABELS)) as f:
         classes = {}
         for label in f:
             label = label.rstrip().split("\t")
             classes[int(label[0])] = label[1].split(",")[0]
 
     # Load a model
-    state_dict = torch.load(CONFIG.PYTORCH_MODEL)
+    state_dict = torch.load(os.path.join(rootpath, CONFIG.PYTORCH_MODEL))
 
     # Model
     model = PSPNet(
