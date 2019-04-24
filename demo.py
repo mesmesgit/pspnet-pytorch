@@ -115,6 +115,10 @@ def main(config, image_path, cuda, crf):
         ax.imshow(mask.astype(np.float32), alpha=0.5, cmap="viridis")
         ax.set_xticks([])
         ax.set_yticks([])
+        # MES change to save the sky class image as a separate image
+        if classes[label] == 'sky':
+            masked_image = cv2.bitwise_and(image_original, image_original, mask=mask)
+            plt.imsave('docs/image-sky-masked.png', masked_image)
 
     plt.tight_layout()
     # MES changes to save output
