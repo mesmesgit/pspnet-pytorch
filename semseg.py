@@ -78,9 +78,9 @@ def semseg(rootpath, config, image_path, cuda, crf):
     #  for color image input, ignoring alpha channel: use cv2.IMREAD_COLOR
     #  for color image input, keeping alpha channel:  use cv2.IMREAD_UNCHANGED
     #  for grayscale image input, use cv2.IMREAD_GRAYSCALE
-    rgbaImage = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
-    rgbImage = cv2.cvtColor(rgbaImage, cv2.COLOR_RGBA2RGB)
-    image = cv2.resize(rgbImage, image_size).astype(float)
+    img = cv2.imread(image_path, cv2.IMREAD_COLOR)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    image = cv2.resize(img, image_size).astype(float)
     image_original = image.astype(np.uint8)
     image = image[..., ::-1] - np.array(
         [CONFIG.IMAGE.MEAN.R, CONFIG.IMAGE.MEAN.G, CONFIG.IMAGE.MEAN.B]
@@ -135,8 +135,7 @@ def semseg(rootpath, config, image_path, cuda, crf):
         # MES change to save the sky class image as a separate image
         if classes[label] == 'sky':
             mask_invert = labelmap != label     # preserve non-sky pixels
-            # masked_image = cv2.bitwise_and(image_original, image_original, mask=mask_invert.astype(np.uint8))
-            cv2.Copy(image_original, masked_image, mask=mask_invert.astype(np.uint8))
+            masked_image = cv2.bitwise_and(image_original, image_original, mask=mask_invert.astype(np.uint8))
             # plt.imsave(out_masked_sky_image, masked_image)
 
     # plt.tight_layout()
