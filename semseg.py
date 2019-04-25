@@ -75,10 +75,12 @@ def semseg(rootpath, config, image_path, cuda, crf):
 
     # Image preprocessing
     #  MES change for grayscale
-    #  for color image input, use cv2.IMREAD_COLOR
+    #  for color image input, ignoring alpha channel: use cv2.IMREAD_COLOR
+    #  for color image input, keeping alpha channel:  use cv2.IMREAD_UNCHANGED
     #  for grayscale image input, use cv2.IMREAD_GRAYSCALE
-    image = cv2.imread(image_path, cv2.IMREAD_COLOR).astype(float)
-    image = cv2.resize(image, image_size)
+    rgbaImage = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
+    rgbImage = cv2.cvtColor(rgbaImage, cv2.COLOR_RGBA2RGB)
+    image = cv2.resize(rgbImage, image_size).astype(float)
     image_original = image.astype(np.uint8)
     image = image[..., ::-1] - np.array(
         [CONFIG.IMAGE.MEAN.R, CONFIG.IMAGE.MEAN.G, CONFIG.IMAGE.MEAN.B]
