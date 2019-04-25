@@ -47,7 +47,7 @@ from libs.utils import dense_crf
 #  out_class_figure = 'docs/demo_out.png'
 #  out_masked_sky_image = 'docs/image-sky-masked.png'
 #
-def semseg(rootpath, config, image_path, cuda, crf):
+def semseg(rootpath, config, image_path, cuda, crf, out_class_figure):
     CONFIG = Dict(yaml.load(open(config)))
 
     cuda = cuda and torch.cuda.is_available()
@@ -106,42 +106,40 @@ def semseg(rootpath, config, image_path, cuda, crf):
         #
     #
     labelmap = np.argmax(output.transpose(1, 2, 0), axis=2)
-
     labels = np.unique(labelmap)
-
-    """
+    #
     rows = np.floor(np.sqrt(len(labels) + 1))
     cols = np.ceil((len(labels) + 1) / rows)
-
+    #
     plt.figure(figsize=(10, 10))
     ax = plt.subplot(rows, cols, 1)
     ax.set_title("Input image")
     ax.imshow(image_original[:, :, ::-1])
     ax.set_xticks([])
     ax.set_yticks([])
-    """
+
 
     for i, label in enumerate(labels):
         print("{0:3d}: {1}".format(label, classes[label]))
         mask = labelmap == label
-        """
+
         ax = plt.subplot(rows, cols, i + 2)
         ax.set_title(classes[label])
         ax.imshow(image_original[:, :, ::-1])
         ax.imshow(mask.astype(np.float32), alpha=0.5, cmap="viridis")
         ax.set_xticks([])
         ax.set_yticks([])
-        """
+
         # MES change to save the sky class image as a separate image
         if classes[label] == 'sky':
             mask_invert = labelmap != label     # preserve non-sky pixels
             masked_image = cv2.bitwise_and(image_original, image_original, mask=mask_invert.astype(np.uint8))
             # plt.imsave(out_masked_sky_image, masked_image)
 
-    # plt.tight_layout()
+    plt.tight_layout()
     # MES changes to save output
     # plt.show()
-    # plt.savefig(out_class_figure)
+    plt.savefig(out_class_figure)
     #
     # return the masked sky image
     return masked_image
