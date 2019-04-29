@@ -79,7 +79,7 @@ def semseg(rootpath, config, image_path, cuda, crf, out_class_figure):
     #  for color image input, keeping alpha channel:  use cv2.IMREAD_UNCHANGED
     #  for grayscale image input, use cv2.IMREAD_GRAYSCALE
     img = cv2.imread(image_path, cv2.IMREAD_COLOR)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     image = cv2.resize(img, image_size).astype(float)
     image_original = image.astype(np.uint8)
     image = image[..., ::-1] - np.array(
