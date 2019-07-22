@@ -71,7 +71,8 @@ def semseg(rootpath, config, image_path, cuda, crf, out_class_figure):
     if cuda:
         model.cuda()
 
-    image_size = (CONFIG.IMAGE.SIZE.TEST,) * 2
+    # image_size = (CONFIG.IMAGE.SIZE.TEST,) * 2
+    image_size = (512, 288)
 
     # Image preprocessing
     #  MES change for grayscale
